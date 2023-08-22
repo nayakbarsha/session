@@ -49,7 +49,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+# added this line 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# 
 ROOT_URLCONF = 'dj_admin.urls'
 
 TEMPLATES = [
