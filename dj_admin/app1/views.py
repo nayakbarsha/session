@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from . import forms 
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .forms import SignupForm
+from .forms import SignupForm, EditForm, LoginForm
 
 # Create your views here.
 def home(request):
@@ -13,10 +15,10 @@ def home(request):
         return render(request, 'base.html', param)
     else:
         return redirect('login')
-    # return render(request, 'login.html')
 
 
 def signup(request):
+    message = ''
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
@@ -27,7 +29,8 @@ def signup(request):
             password = form.cleaned_data['password']
         # print(uname, pwd)
         if User.objects.filter(username=username).exists():
-            return HttpResponse('Username already exists.')
+            message = 'Username already exists.'
+
         else:
             user = User.objects.create_user(username=username, password=password, first_name=firstname, last_name=lastname, email=email)
             # user.first_name = firstname
@@ -38,24 +41,30 @@ def signup(request):
     else:
         form = SignupForm()
     
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'signup.html', {'signup_form': form, 'message' : message})
 
 
 
 def user_login(request):
+    form = LoginForm()
+    message = ''
     if request.method == 'POST':
-        uname = request.POST.get('uname')
-        pwd = request.POST.get('pwd')
-
-        user = authenticate(request, username=uname, password=pwd)
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
             request.session['user'] = user.username  # Set the user in the session
             return redirect('home')
+        if not User.objects.filter(username=username).exists():
+            message = 'User does not exists.'
+            # return redirect('login')
         else:
-            return HttpResponse('Please enter valid Username or Password.')
-
-    return render(request, 'login.html')
+            message = 'Please enter valid Username or Password.'
+            # return redirect('login')
+    return render(request, 'login.html', context={'login_form': form, 'message' : message})
 
 
 def user_logout(request):
@@ -68,95 +77,24 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
+def edit(request):
+    user = request.user
+    if request.method == 'POST':
+        form = EditForm(request.POST)
+        if form.is_valid():
+            user.first_name = form.cleaned_data['firstname']
+            user.last_name = form.cleaned_data['lastname']
+            user.email = form.cleaned_data['email']
+            user.save()
+            return redirect('home')
+    else:
+        form = EditForm({'firstname': user.first_name, 'lastname': user.last_name, 'email': user.email})
+    return render(request,'edit.html', {'edit_form': form}) 
 
 
+def delete_user(request):
+    user = request.user
+    user.delete()
+    logout(request)
+    return redirect('login')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# except:
-#         return redirect('login')
-#     return redirect('login')
-
-
-
-
-# from django.contrib.auth.decorators import login_required
-
-# @login_required
-# def home(request):
-#     current_user = request.user.username
-#     param = {'current_user': current_user}
-#     return render(request, 'base.html', param)
-
-
-
-
-# def home(request):
-#     if 'user' in request.session:
-#         current_user = request.session['user']
-#         param = {'current_user': current_user}
-#         return render(request, 'base.html', param)
-#     else:
-#         return redirect('login')
-#     return render(request, 'login.html')
-
-
-
-
-
-
-
-
-
-
-
-
-
-# from django.shortcuts import render, redirect
-# from django.contrib.auth import authenticate, login, logout
-# from django.http import HttpResponse
-
-# def home(request):
-#     if request.user.is_authenticated:
-#         current_user = request.user
-#         param = {'current_user': current_user}
-#         return render(request, 'base.html', param)
-#     else:
-#         return redirect('login')
-
-# def signup(request):
-#     if request.method == 'POST':
-#         uname = request.POST.get('uname')
-#         pwd = request.POST.get('pwd')
-        
-#         if User.objects.filter(username=uname).exists():
-#             return HttpResponse('Username already exists.')
-#         else:
-#             user = User.objects.create_user(username=uname, password=pwd)
-#             user.save()
-#             return redirect('login')
-#     else:
-#         return render(request, 'signup.html')
-
-# # The login and logout views remain the same as in your original code.
-
-# def logout_view(request):
-#     logout(request)
-#     return redirect('login')
