@@ -9,10 +9,14 @@ from .forms import SignupForm, EditForm, LoginForm
 # Create your views here.
 def home(request):
     current_user = request.session.get('user')
-    
-    if current_user:
+    print(current_user)
+    if request.user.is_superuser:
+        users = User.objects.all()
+        param = {'users': users}
+        return render(request, 'user_list.html', param)
+    elif current_user:
         param = {'current_user': current_user}
-        return render(request, 'base.html', param)
+        return render(request, 'user_list.html', param)
     else:
         return redirect('login')
 
@@ -32,7 +36,8 @@ def signup(request):
             message = 'Username already exists.'
 
         else:
-            user = User.objects.create_user(username=username, password=password, first_name=firstname, last_name=lastname, email=email)
+            user = User.objects.create_user(username=username, password=password,
+                     first_name=firstname, last_name=lastname, email=email)
             # user.first_name = firstname
             # user.last_name = lastname
             # user.email = email

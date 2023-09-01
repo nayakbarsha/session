@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Login{% endblock %}
+
+{% block body %}
+        {% if user.is_superuser %}
+        <div class="row">
+            <div class="col-md-8">
+              <h2>Welcome, <span style="color: dodgerblue;">{{user}}.</span></h2>
+            </div>
+          </div>
+          <table class="table table-borderless">
+            <thead class="border-bottom font-weight-bold">
+                <tr>
+                    <td>Firstname</td>
+                    <td>Lastname</td>
+                    <td>Email Id</td>
+                    <td>Username</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.username}}</td>
+                        <td>
+                          <a href="{% url 'edit' %}">
+                            <i class="fas fa-user-edit fa-lg" style="color: #005eff;"></i>
+                          </a>
+                          <a href="{% url 'delete_user' %}">
+                            <i class="fas fa-trash-alt fa-lg" style="color: #ff0000;"></i>        
+                          </a>  
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% elif current_user %}
+            <div class="row">
+            <div class="col-md-8">
+                <h2>Welcome <span style="color: dodgerblue;">{{current_user}}</span>!</h2>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'edit' %}">
+                <i class="fas fa-user-edit fa-lg" style="color: #005eff;"></i>
+                </a>
+                <a href="{% url 'delete_user' %}">
+                <i class="fas fa-trash-alt fa-lg" style="color: #ff0000;"></i>        
+                </a>        
+            <div>
+            </div>  
+            
+        {% endif %}
+
+{% endblock %}
