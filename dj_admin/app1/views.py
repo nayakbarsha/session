@@ -9,13 +9,15 @@ from .forms import SignupForm, EditForm, LoginForm
 # Create your views here.
 def home(request):
     current_user = request.session.get('user')
-    print(current_user)
+    # print(current_user)
     if request.user.is_superuser:
-        users = User.objects.all()
+        users = User.objects.all()  
+        # print(users)
         param = {'users': users}
         return render(request, 'user_list.html', param)
     elif current_user:
         param = {'current_user': current_user}
+        # print(current_user)
         return render(request, 'user_list.html', param)
     else:
         return redirect('login')
@@ -51,24 +53,29 @@ def signup(request):
 
 
 def user_login(request):
-    form = LoginForm()
-    message = ''
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            request.session['user'] = user.username  # Set the user in the session
-            return redirect('home')
-        if not User.objects.filter(username=username).exists():
-            message = 'User does not exists.'
-            # return redirect('login')
-        else:
-            message = 'Please enter valid Username or Password.'
-            # return redirect('login')
+    # if user is not authenticated or not logged in yet show them login page
+    if not request.user.is_authenticated:
+        form = LoginForm()
+        message = ''
+        if request.method == 'POST':
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password']
+                user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                request.session['user'] = user.username  # Set the user in the session
+                return redirect('home')
+            if not User.objects.filter(username=username).exists():
+                message = 'User does not exists.'
+                # return redirect('login')
+            else:
+                message = 'Please enter valid Username or Password.'
+                # return redirect('login')
+    # else they are already loggedin so we should show them loggedin page or homepage as we call it
+    else:
+        return redirect('home')
     return render(request, 'login.html', context={'login_form': form, 'message' : message})
 
 
@@ -82,24 +89,30 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
-def edit(request):
-    user = request.user
-    if request.method == 'POST':
-        form = EditForm(request.POST)
-        if form.is_valid():
-            user.first_name = form.cleaned_data['firstname']
-            user.last_name = form.cleaned_data['lastname']
-            user.email = form.cleaned_data['email']
-            user.save()
-            return redirect('home')
+def edit(request, user_id):
+    if request.user.is_authenticated:
+        user = User.objects.get(id=user_id)
+        if request.method == 'POST':
+            form = EditForm(request.POST)
+            if form.is_valid():
+                user.first_name = form.cleaned_data['firstname']
+                user.last_name = form.cleaned_data['lastname']
+                user.email = form.cleaned_data['email']
+                user.save()
+                return redirect('home')
+        else:
+            form = EditForm({'firstname': user.first_name, 'lastname': user.last_name, 'email': user.email})
     else:
-        form = EditForm({'firstname': user.first_name, 'lastname': user.last_name, 'email': user.email})
+        return redirect('login')
     return render(request,'edit.html', {'edit_form': form}) 
 
 
-def delete_user(request):
-    user = request.user
-    user.delete()
-    logout(request)
-    return redirect('login')
+def delete_user(request, user_id):
+    if request.user.is_authenticated:
+        user = User.objects.get(id=user_id)
+        user.delete()
+        # logout(request)
+        return redirect('home')
+    else:
+        return redirect('login')
 
