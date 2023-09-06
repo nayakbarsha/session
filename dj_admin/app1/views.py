@@ -108,11 +108,17 @@ def edit(request, user_id):
 
 
 def delete_user(request, user_id):
-    if request.user.is_authenticated:
+    current_user = request.session.get('user')
+    if request.user.is_superuser:
         user = User.objects.get(id=user_id)
         user.delete()
         # logout(request)
         return redirect('home')
+    elif current_user:
+        user = User.objects.get(id=user_id)
+        user.delete()
+        return redirect('login')
     else:
         return redirect('login')
 
+    

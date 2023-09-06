@@ -47,6 +47,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -129,8 +130,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATICFILES_DIRS = [
+# os.path.join(BASE_DIR, 'dj_admin/static')
+# ]
+# STATIC_ROOT = os.path.join(BASE_DIR, '')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# # added this for session expiry
+# SESSION_EXPIRE_SECONDS = 60  # Expire after 30 minutes
+# SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+# SESSION_TIMEOUT_REDIRECT = 'login/' # Add your URL
+# SESSION_EXPIRE_AT_BROWSER_CLOSE=True # Invalid session
+
+# 
+# SESSION_COOKIE_AGE = 60
+# SESSION_SAVE_EVERY_REQUEST = True
