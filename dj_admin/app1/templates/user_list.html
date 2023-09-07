@@ -4,18 +4,24 @@
 
 {% block body %}
         {% if user.is_superuser %}
-        <div class="row">
+        {% comment %} <div class="row">
             <div class="col-md-8">
               <h2>Welcome, <span style="color: dodgerblue;">{{user}}.</span></h2>
             </div>
-          </div>
+          </div> {% endcomment %}
           <table class="table table-borderless">
             <thead class="border-bottom font-weight-bold">
                 <tr>
-                    <td>Firstname</td>
-                    <td>Lastname</td>
-                    <td>Email Id</td>
-                    <td>Username</td>
+                    <td><h3><b>Firstname</b></h3></td>
+                    <td><h3><b>Lastname</b></h3></td>
+                    <td><h3><b>Email Id</b></h3></td>
+                    <td><h3><b>Username</b></h3></td>
+                    <td><h3><b>Mobile</b></h3></td>
+                    <td>
+                      <h4><a href="{% url 'signup' %}">
+                        <i class="fas fa-plus-square fa-lg" style="color: #9429ff;"> Add user</i>                      
+                      </a><h4>
+                    </td>
                 </tr>
             </thead>
             <tbody>
@@ -25,6 +31,7 @@
                         <td>{{user.last_name}}</td>
                         <td>{{user.email}}</td>
                         <td>{{user.username}}</td>
+                        <td>{{user.mobile}}</td>
                         <td>
                           <a href="{% url 'edit' user.id %}">
                             <i class="fas fa-user-edit fa-lg" style="color: #005eff;"></i>

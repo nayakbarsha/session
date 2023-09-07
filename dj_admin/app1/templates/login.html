@@ -10,6 +10,8 @@
         {{ login_form|crispy }}
         <input type="submit" name="submit" value="Login" class="btn btn-primary btn-lg">
         <br></br>
+        <a href="{% url 'signup' %}">Forgot Password <span class="sr-only"></span></a>
+        <br></br>
         {% if message != '' %}
         <div class="alert alert-danger" role="alert">
             <b>{{ message }}</b>

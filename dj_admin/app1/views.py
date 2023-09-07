@@ -32,11 +32,13 @@ def signup(request):
             lastname = form.cleaned_data['lastname']
             email = form.cleaned_data['email']
             username = form.cleaned_data['username']
+            mobile = form.cleaned_data['mobile']
             password = form.cleaned_data['password']
         # print(uname, pwd)
         if User.objects.filter(username=username).exists():
             message = 'Username already exists.'
-
+        if User.objects.filter(email=email).exists():
+            message = 'Email already exists.'
         else:
             user = User.objects.create_user(username=username, password=password,
                      first_name=firstname, last_name=lastname, email=email)
@@ -98,10 +100,12 @@ def edit(request, user_id):
                 user.first_name = form.cleaned_data['firstname']
                 user.last_name = form.cleaned_data['lastname']
                 user.email = form.cleaned_data['email']
+                user.username = form.cleaned_data['username']
+                user.mobile = form.cleaned_data['mobile']
                 user.save()
                 return redirect('home')
         else:
-            form = EditForm({'firstname': user.first_name, 'lastname': user.last_name, 'email': user.email})
+            form = EditForm({'firstname': user.first_name, 'lastname': user.last_name, 'email': user.email, 'username': user.username, 'mobile': user.mobile})
     else:
         return redirect('login')
     return render(request,'edit.html', {'edit_form': form}) 
@@ -121,4 +125,9 @@ def delete_user(request, user_id):
     else:
         return redirect('login')
 
-    
+# def change_password(request, user_id):
+#     if request.user.is_authenticated:
+#         user = User.objects.get(id=user_id)
+#         if request.method == 'POST':
+#             form = EditForm(request.POST)
+#     return render(request,'change_password.html', {'change_password': form})
