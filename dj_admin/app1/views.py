@@ -1,17 +1,13 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.models import User
-from . import forms 
-from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from .forms import SignupForm, EditForm, LoginForm
-
 # Create your views here.
 def home(request):
     current_user = request.session.get('user')
     # print(current_user)
     if request.user.is_superuser:
-        users = User.objects.all()  
+        users = User.objects.all()
         # print(users)
         param = {'users': users}
         return render(request, 'user_list.html', param)
@@ -32,7 +28,6 @@ def signup(request):
             lastname = form.cleaned_data['lastname']
             email = form.cleaned_data['email']
             username = form.cleaned_data['username']
-            mobile = form.cleaned_data['mobile']
             password = form.cleaned_data['password']
         # print(uname, pwd)
         if User.objects.filter(username=username).exists():
@@ -49,7 +44,6 @@ def signup(request):
             return redirect('login')
     else:
         form = SignupForm()
-    
     return render(request, 'signup.html', {'signup_form': form, 'message' : message})
 
 
@@ -71,10 +65,8 @@ def user_login(request):
                 return redirect('home')
             if not User.objects.filter(username=username).exists():
                 message = 'User does not exists.'
-                # return redirect('login')
             else:
                 message = 'Please enter valid Username or Password.'
-                # return redirect('login')
     # else they are already loggedin so we should show them loggedin page or homepage as we call it
     else:
         return redirect('home')
@@ -92,6 +84,7 @@ def user_logout(request):
     return redirect('login')
 
 def edit(request, user_id):
+    message = ''
     if request.user.is_authenticated:
         user = User.objects.get(id=user_id)
         if request.method == 'POST':
@@ -101,14 +94,19 @@ def edit(request, user_id):
                 user.last_name = form.cleaned_data['lastname']
                 user.email = form.cleaned_data['email']
                 user.username = form.cleaned_data['username']
-                user.mobile = form.cleaned_data['mobile']
+            if User.objects.exclude(id=user_id).filter(username=user.username).exists():
+                message = 'Username already exists.'
+            if User.objects.exclude(id=user_id).filter(email=user.email).exists():
+                message = 'Email already exists.'
+            else:
                 user.save()
                 return redirect('home')
         else:
-            form = EditForm({'firstname': user.first_name, 'lastname': user.last_name, 'email': user.email, 'username': user.username, 'mobile': user.mobile})
+            form = EditForm({'firstname': user.first_name, 'lastname': user.last_name,
+                    'email': user.email, 'username': user.username})
     else:
         return redirect('login')
-    return render(request,'edit.html', {'edit_form': form}) 
+    return render(request,'edit.html', {'edit_form': form, 'message' : message})
 
 
 def delete_user(request, user_id):

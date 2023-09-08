@@ -54,9 +54,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-# added this line 
+# added this line
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-# 
+#
 ROOT_URLCONF = 'dj_admin.urls'
 
 TEMPLATES = [
@@ -99,22 +99,15 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-                'OPTIONS':{
-                    'user_attributes': (
-                        'username', 'email', 'first_name', 'last_name'
-                    ),
-                    'max_similarity': 1
-                },
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-                'OPTIONS': {
-                    'min_length': 9,
-                },
+        'OPTIONS': {
+            'min_length': 10,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-        
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
@@ -157,6 +150,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # SESSION_TIMEOUT_REDIRECT = 'login/' # Add your URL
 # SESSION_EXPIRE_AT_BROWSER_CLOSE=True # Invalid session
 
-# 
+#
 # SESSION_COOKIE_AGE = 60
 # SESSION_SAVE_EVERY_REQUEST = True
