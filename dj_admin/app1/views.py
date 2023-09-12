@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .forms import SignupForm, EditForm, LoginForm
+from .helpers import send_forgot_password_mail
+from django. contrib import messages 
+import uuid
+
 # Create your views here.
 def home(request):
     current_user = request.session.get('user')
@@ -20,31 +24,60 @@ def home(request):
 
 
 def signup(request):
-    message = ''
+    # print("Inside signup")
+    errors = []
     if request.method == 'POST':
+        # print("Inside Post")
         form = SignupForm(request.POST)
         if form.is_valid():
+            # print("Form is Valid")
             firstname = form.cleaned_data['firstname']
             lastname = form.cleaned_data['lastname']
             email = form.cleaned_data['email']
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-        # print(uname, pwd)
-        if User.objects.filter(username=username).exists():
-            message = 'Username already exists.'
-        if User.objects.filter(email=email).exists():
-            message = 'Email already exists.'
         else:
-            user = User.objects.create_user(username=username, password=password,
+            print(form.errors)
+            print("Oppps....Form is Invalid!")
+            # errors = ['form invalid']
+            return render(request, 'signup.html', {'signup_form': form, 'errors': errors})
+        # print(uname, pwd)
+        # DB validation for duplicate user
+        try:
+            # errors = []
+            # if User.objects.filter(username=username).exists() and User.objects.filter(email=email).exists() :
+            #     errors.append('Username already exists.')
+            #     errors.append('Email already exists.')
+            # elif User.objects.filter(email=email).exists():
+            #     errors.append('Email already exists.')
+            # elif User.objects.filter(username=username).exists():
+            #     errors.append('Username already exists.')
+            # else:
+            #     user = User.objects.create_user(username=username, password=password,
+            #          first_name=firstname, last_name=lastname, email=email)
+            #     user.save()
+            #     return redirect('login')
+            isDuplicate = False
+            errors = []
+            if User.objects.filter(email=email).exists():
+                isDuplicate = True
+                errors.append('Email already exists.')
+            if User.objects.filter(username=username).exists():
+                isDuplicate = True
+                errors.append('Username already exists.')
+            if not isDuplicate:
+                user = User.objects.create_user(username=username, password=password,
                      first_name=firstname, last_name=lastname, email=email)
-            # user.first_name = firstname
-            # user.last_name = lastname
-            # user.email = email
-            user.save()
-            return redirect('login')
+                user.save()
+                return redirect('login')
+        except Exception as e:
+            print("Exception Happened {e}")
     else:
+        # print("Showing signup Form")
         form = SignupForm()
-    return render(request, 'signup.html', {'signup_form': form, 'message' : message})
+
+    # print("Before Final line")
+    return render(request, 'signup.html', {'signup_form': form, 'errors' : errors}) 
 
 
 
@@ -84,7 +117,7 @@ def user_logout(request):
     return redirect('login')
 
 def edit(request, user_id):
-    message = ''
+    errors = []
     if request.user.is_authenticated:
         user = User.objects.get(id=user_id)
         if request.method == 'POST':
@@ -94,11 +127,21 @@ def edit(request, user_id):
                 user.last_name = form.cleaned_data['lastname']
                 user.email = form.cleaned_data['email']
                 user.username = form.cleaned_data['username']
-            if User.objects.exclude(id=user_id).filter(username=user.username).exists():
-                message = 'Username already exists.'
-            if User.objects.exclude(id=user_id).filter(email=user.email).exists():
-                message = 'Email already exists.'
             else:
+                print(form.errors)
+                print("Oppps....Form is Invalid!")
+                # errors = ['Form invalid']
+                return render(request,'edit.html', {'edit_form': form, 'errors': errors})
+            
+            isDuplicate = False
+            errors = []
+            if User.objects.exclude(id=user_id).filter(username=user.username).exists():
+                isDuplicate = True
+                errors.append('Username already exists.')
+            if User.objects.exclude(id=user_id).filter(email=user.email).exists():
+                isDuplicate = True
+                errors.append('Email already exists.')
+            if not isDuplicate:
                 user.save()
                 return redirect('home')
         else:
@@ -106,7 +149,7 @@ def edit(request, user_id):
                     'email': user.email, 'username': user.username})
     else:
         return redirect('login')
-    return render(request,'edit.html', {'edit_form': form, 'message' : message})
+    return render(request,'edit.html', {'edit_form': form, 'errors': errors})
 
 
 def delete_user(request, user_id):
@@ -122,10 +165,41 @@ def delete_user(request, user_id):
         return redirect('login')
     else:
         return redirect('login')
+    
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
 
-# def change_password(request, user_id):
-#     if request.user.is_authenticated:
-#         user = User.objects.get(id=user_id)
-#         if request.method == 'POST':
-#             form = EditForm(request.POST)
-#     return render(request,'change_password.html', {'change_password': form})
+# def custom_500(request):
+#     return render(request, '500.html', status=500)
+
+def change_password(request, token):
+    context = {}
+
+    try:
+        profile_obj = User.objects.filter(forgot_password_token = token).exists
+        print(profile_obj)    
+    except Exception as e:
+        print(e)
+    return render(request,'change_password.html')
+
+def forgot_password(request):
+    try:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+
+            if not User.objects.filter(username=username).exists():
+                messages.success(request, 'no user found with this username')
+                return redirect('/forgot_password/')
+            
+            user_obj = User.objects.get(username=username)
+            token = str(uuid.uuid4())
+            profile_obj = User.objects.get(user=user_obj)
+            profile_obj.forgot_password_token = token
+            profile_obj.save()
+            send_forgot_password_mail(user_obj, token)
+            messages.success(request, 'An e-mail has been sent to your email id')
+            return redirect('/forgot_password/')
+        
+    except Exception as e:
+        print(e)
+    return render(request, 'forgot_password.html')

@@ -1,12 +1,12 @@
 from django import forms
-# from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password
 class SignupForm(forms.Form):
     firstname = forms.CharField(max_length=20)
     lastname = forms.CharField(max_length=20)
     email = forms.EmailField()
     username = forms.CharField(max_length=30)
-    password = forms.CharField(widget=forms.PasswordInput)
-
+    password = forms.CharField(widget=forms.PasswordInput, validators=[validate_password])
+    # password = forms.CharField(widget=forms.PasswordInput(),validators=[min_length])
 
 class EditForm(forms.Form):
     firstname = forms.CharField(max_length=20)
@@ -27,4 +27,3 @@ class LoginForm(forms.Form):
 # class OtpValidator(forms.Form):
 #     email = forms.EmailField()
 #     otp = forms.CharField(max_length=6)
-# validators=[validate_password]

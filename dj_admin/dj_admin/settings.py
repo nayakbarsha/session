@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,15 +32,17 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'app1',
+    'crispy_forms',
+    'crispy_bootstrap4',
+    'django_password_validators',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app1',
-    'crispy_forms',
-    'crispy_bootstrap4',
+    # "verify_email.apps.VerifyEmailConfig",
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -103,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         'OPTIONS': {
-            'min_length': 10,
+            'min_length': 8,
         }
     },
     {
@@ -111,6 +114,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+    {
+        'NAME': 'django_password_validators.password_character_requirements.password_validation.PasswordCharacterValidator',
+        'OPTIONS': {
+             'min_length_digit': 1,
+             'min_length_alpha': 2,
+             'min_length_special': 1,
+             'min_length_lower': 3,
+             'min_length_upper': 1,
+             'special_characters': "~!@#$%^&*()_+{}\":;'[]"
+         }
     },
 ]
 
@@ -133,23 +147,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [
-# os.path.join(BASE_DIR, 'dj_admin/static')
-# ]
-# STATIC_ROOT = os.path.join(BASE_DIR, '')
 
-
+# LOGIN_URL = '/login/'
+  
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# # added this for session expiry
-# SESSION_EXPIRE_SECONDS = 60  # Expire after 30 minutes
-# SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
-# SESSION_TIMEOUT_REDIRECT = 'login/' # Add your URL
-# SESSION_EXPIRE_AT_BROWSER_CLOSE=True # Invalid session
+# before hosting or sharing project remove this line  
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+
+
+# added this for session expiry
+SESSION_EXPIRE_SECONDS = 900  # Expire after 15 minutes
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+SESSION_TIMEOUT_REDIRECT = 'login/' # Add your URL
+SESSION_EXPIRE_AT_BROWSER_CLOSE=True # Invalid session
 
 #
 # SESSION_COOKIE_AGE = 60
 # SESSION_SAVE_EVERY_REQUEST = True
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+# DEFAULT_FROM_EMAIL = 'noreply<no_reply@domain.com>'
