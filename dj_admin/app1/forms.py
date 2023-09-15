@@ -6,7 +6,6 @@ class SignupForm(forms.Form):
     email = forms.EmailField()
     username = forms.CharField(max_length=30)
     password = forms.CharField(widget=forms.PasswordInput, validators=[validate_password])
-    # password = forms.CharField(widget=forms.PasswordInput(),validators=[min_length])
 
 class EditForm(forms.Form):
     firstname = forms.CharField(max_length=20)
@@ -20,9 +19,12 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
 
 # class ChangePassword(forms.Form):
-#     old_password = forms.CharField(max_length=30)
-#     new_password = forms.CharField(max_length=30)
-#     confirm_password = forms.CharField(max_length=30)
+#     new_password = forms.CharField(widget=forms.PasswordInput, validators=[validate_password])
+#     confirm_password = forms.CharField(widget=forms.PasswordInput)
+
+# class ForgotPassword(forms.Form):
+#     email = forms.EmailField()
+#     username = forms.CharField(max_length=30)
 
 # class OtpValidator(forms.Form):
 #     email = forms.EmailField()

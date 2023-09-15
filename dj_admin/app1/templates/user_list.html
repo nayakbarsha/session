@@ -4,11 +4,6 @@
 
 {% block body %}
         {% if user.is_superuser %}
-        {% comment %} <div class="row">
-            <div class="col-md-8">
-              <h2>Welcome, <span style="color: dodgerblue;">{{user}}.</span></h2>
-            </div>
-          </div> {% endcomment %}
           <table class="table table-borderless">
             <thead class="border-bottom font-weight-bold">
                 <tr>
@@ -21,9 +16,22 @@
                         <i class="fas fa-plus-square fa-lg" style="color: #9429ff;"> Add user</i>                      
                       </a><h4>
                     </td>
+                    {% comment %} <td><form class="form-inline my-2 my-lg-0" method="GET">
+                      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form></td> {% endcomment %}
+                    <td><form method="GET">
+                      <div class="input-group mb-3">
+                          <input type="text" class="form-control" name="search" placeholder="Search for users">
+                          <div class="input-group-append">
+                              <button class="btn btn-outline-secondary" type="submit">Search</button>
+                          </div>
+                      </div>
+                  </form></td>
                 </tr>
             </thead>
             <tbody>
+              
                 {% for user in users %}
                     <tr>
                         <td>{{user.first_name}}</td>
@@ -56,5 +64,39 @@
                 </a>      
             <div>
             </div>  
+        {% endif %}
+
+        {% if users.has_other_pages %}
+          <ul class="pagination">
+            {% if users.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ users.previous_page_number }}">Previous</a>
+              </li>
+            {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            {% endif %}
+            {% for i in users.paginator.page_range %}
+              {% if users.number == i %}
+                <li class="page-item active" aria-current="page">
+                  <a class="page-link" >{{i}} <span class="sr-only">(current)</span></a>
+                </li>
+              {% else %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ i }}">{{i}} </a>
+                </li>
+              {% endif %}
+            {% endfor %}
+            {% if users.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ users.next_page_number }}">Next</a>
+              </li>
+            {% else %}
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+            </li>
+            {% endif %}
+          </ul>
         {% endif %}
 {% endblock %}

@@ -2,23 +2,42 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .forms import SignupForm, EditForm, LoginForm
-from .helpers import send_forgot_password_mail
-from django. contrib import messages 
-import uuid
-
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+# from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 # Create your views here.
 def home(request):
     current_user = request.session.get('user')
-    # print(current_user)
+    search_query = request.GET.get('search', '')  # Get the search query from the URL parameter
+    user_list = User.objects.all()
+    print("---------------")
+    print(len(user_list))
+    print(user_list)
+
+    if search_query:
+        # If a search query is provided, filter the user list based on username, first name, or last name
+        user_list = user_list.filter(Q(username__icontains=search_query) | Q(first_name__icontains=search_query) | Q(last_name__icontains=search_query) | Q(email__icontains=search_query))
+    # for paginator
+    page = request.GET.get('page', 1)
+    paginator = Paginator(user_list, 5)
+    
+    print(paginator.num_pages)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+
     if request.user.is_superuser:
-        users = User.objects.all()
-        # print(users)
-        param = {'users': users}
-        return render(request, 'user_list.html', param)
+        return render(request, 'user_list.html', {'users': users, 'search_query': search_query})
     elif current_user:
         param = {'current_user': current_user}
         # print(current_user)
-        return render(request, 'user_list.html', param)
+        return render(request, 'user_list.html', {'users': users, 'search_query': search_query})
     else:
         return redirect('login')
 
@@ -172,34 +191,62 @@ def custom_404(request, exception):
 # def custom_500(request):
 #     return render(request, '500.html', status=500)
 
-def change_password(request, token):
-    context = {}
 
-    try:
-        profile_obj = User.objects.filter(forgot_password_token = token).exists
-        print(profile_obj)    
-    except Exception as e:
-        print(e)
-    return render(request,'change_password.html')
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'password_reset.html'
+    email_template_name = 'password_reset_email.html'
+    subject_template_name = 'password_reset_subject'
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+    success_url = reverse_lazy('home')
 
-def forgot_password(request):
-    try:
-        if request.method == 'POST':
-            username = request.POST.get('username')
 
-            if not User.objects.filter(username=username).exists():
-                messages.success(request, 'no user found with this username')
-                return redirect('/forgot_password/')
-            
-            user_obj = User.objects.get(username=username)
-            token = str(uuid.uuid4())
-            profile_obj = User.objects.get(user=user_obj)
-            profile_obj.forgot_password_token = token
-            profile_obj.save()
-            send_forgot_password_mail(user_obj, token)
-            messages.success(request, 'An e-mail has been sent to your email id')
-            return redirect('/forgot_password/')
-        
-    except Exception as e:
-        print(e)
-    return render(request, 'forgot_password.html')
+
+
+
+
+
+
+
+
+
+
+# from django.db.models import Q
+
+# def home(request):
+#     current_user = request.session.get('user')
+#     search_query = request.GET.get('search', '')  # Get the search query from the URL parameter
+#     user_list = User.objects.all()
+
+#     if search_query:
+#         # If a search query is provided, filter the user list based on username, first name, or last name
+#         user_list = user_list.filter(Q(username__icontains=search_query) | Q(first_name__icontains=search_query) | Q(last_name__icontains=search_query))
+
+#     page = request.GET.get('page', 1)
+#     paginator = Paginator(user_list, 10)
+    
+#     try:
+#         users = paginator.page(page)
+#     except PageNotAnInteger:
+#         users = paginator.page(1)
+#     except EmptyPage:
+#         users = paginator.page(paginator.num_pages)
+    
+#     if request.user.is_superuser:
+#         return render(request, 'user_list.html', {'users': users, 'search_query': search_query})
+#     elif current_user:
+#         param = {'current_user': current_user}
+#         return render(request, 'user_list.html', {'users': users, 'search_query': search_query, **param})
+#     else:
+#         return redirect('login')
+# ```
+
+# In this modified `home` view:
+
+# 1. We retrieve the search query from the URL parameter using `request.GET.get('search', '')`.
+# 2. If a search query is provided, we filter the `user_list` queryset based on username, first name, or last name using the `Q` object.
+# 3. We pass the `search_query` along with the `users` queryset to the `user_list.html` template so that you can display it in the search input field and use it for displaying search results.
+
+# Now, you can update your `user_list.html` template to include the search input field and display the filtered user list.
