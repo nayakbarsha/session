@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
 {% block title %}Login{% endblock %}
+{% block navbar %}
+
+  <ul class="nav navbar-nav ml-auto">
+    <form class="form-inline">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </ul>
+
+{% endblock %}
 
 {% block body %}
         {% if user.is_superuser %}
@@ -16,18 +26,6 @@
                         <i class="fas fa-plus-square fa-lg" style="color: #9429ff;"> Add user</i>                      
                       </a><h4>
                     </td>
-                    {% comment %} <td><form class="form-inline my-2 my-lg-0" method="GET">
-                      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                    </form></td> {% endcomment %}
-                    <td><form method="GET">
-                      <div class="input-group mb-3">
-                          <input type="text" class="form-control" name="search" placeholder="Search for users">
-                          <div class="input-group-append">
-                              <button class="btn btn-outline-secondary" type="submit">Search</button>
-                          </div>
-                      </div>
-                  </form></td>
                 </tr>
             </thead>
             <tbody>

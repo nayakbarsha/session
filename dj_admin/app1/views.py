@@ -37,7 +37,7 @@ def home(request):
     elif current_user:
         param = {'current_user': current_user}
         # print(current_user)
-        return render(request, 'user_list.html', {'users': users, 'search_query': search_query})
+        return render(request, 'user_list.html', param)
     else:
         return redirect('login')
 

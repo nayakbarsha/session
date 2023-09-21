@@ -65,7 +65,7 @@ ROOT_URLCONF = 'dj_admin.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -147,6 +147,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # LOGIN_URL = '/login/'
   
@@ -168,13 +171,13 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE=True # Invalid session
 
 
 # DEFAULT_FROM_EMAIL = 'noreply<no_reply@domain.com>'
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # for development only
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'dummyftesting@gmail.com'
-EMAIL_HOST_PASSWORD = 'jkn@2023'
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # for development only
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'dummyftesting@gmail.com'
+# EMAIL_HOST_PASSWORD = 'jkn@2023'
 
 # str(os.getenv('EMAIL_USER'))
 # str(os.getenv('EMAIL_PASSWORD'))
