@@ -1,21 +1,18 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% block title %}Login{% endblock %}
-{% block navbar %}
-
-  <ul class="nav navbar-nav ml-auto">
-    <form class="form-inline">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </ul>
-
-{% endblock %}
+{% block title %}Reddit{% endblock %}
 
 {% block body %}
         {% if user.is_superuser %}
           <table class="table table-borderless">
             <thead class="border-bottom font-weight-bold">
+
+                <form class="form-inline">
+                  <div class="input-group">
+                    <input class="form-control mr-sm-1" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                  </div>
+                </form>             
                 <tr>
                     <td><h3><b>Firstname</b></h3></td>
                     <td><h3><b>Lastname</b></h3></td>
