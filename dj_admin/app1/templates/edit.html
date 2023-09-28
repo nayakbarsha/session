@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
+{%load static%}
 {% load crispy_forms_tags %}
 
 {% block title %}Edit Form{% endblock %}
 {% block body %}
-<h2 class="row justify-content-center">Edit Form</h2>
-<hr class="my-4">
+<h2>Edit Form</h2>
     <form method="POST">
         {% csrf_token %}
         {{ edit_form|crispy }}

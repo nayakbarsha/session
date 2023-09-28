@@ -1,17 +1,19 @@
 {% extends 'base.html' %}
+{%load static%}
 {% load crispy_forms_tags %}
 {% block title %}Login{% endblock %}
 
 {% block body %}
-<h2 class="row justify-content-center">Login here!</h2>
-<hr class="my-4">
+<h2>Login here!</h2>
+
     <form method="POST">
         {% csrf_token %}
         {{ login_form|crispy }}
         <input type="submit" name="submit" value="Login" class="btn btn-primary btn-lg">
-        {% comment %} <br></br> {% endcomment %}
+        <br></br>
+        {% comment %} <a>Forgot Password <span class="sr-only"></span></a> {% endcomment %}
         {% comment %} <a href="{% url 'password_reset' %}"><i>Forgot Password?</i></a> {% endcomment %}
-        {% comment %} <br></br> {% endcomment %}
+        <br></br>
         {% if message != '' %}
         <div class="alert alert-danger" role="alert">
             <b>{{ message }}</b>
