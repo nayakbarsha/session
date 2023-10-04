@@ -5,196 +5,120 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-         <!-- Bootstrap CSS -->
+         
+        <!-- Bootstrap CSS -->
          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
-         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
-         <!--my css-->
-         <link rel="stylesheet" href="{% static 'css/style1.css' %}">
-         <script src="{% static 'js/a.js' %}"></script>
-
+        <!--my css-->
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <!-- CDN -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+        <!-- Fontawesome -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous">
         <title>{% block title %}{% endblock %}</title>
     </head>
     <body>
-      <div class="container-fluid px-0">
-        <div class="row collapse show no-gutters d-flex h-100 position-relative">
-            <div class="col-3 p-0 h-100 w-sidebar navbar-collapse collapse d-none d-md-flex sidebar">
-                <!-- fixed sidebar -->
-                <div class="navbar-dark bg-dark text-white position-fixed h-100 align-self-start w-sidebar">
-                    <h6 class="px-3 pt-3">Menu<a data-toggle="collapse" class="px-1 d-inline d-md-none text-white" href="#" data-target=".collapse"><i class="fa fa-bars"></i></a></h6>
-                    <ul class="nav flex-column flex-nowrap text-truncate">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Users</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#"></a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col p-3"> 
-        
-        {% comment %} start of nav bar {% endcomment %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-               <!-- toggler -->
-                <a data-toggle="collapse" href="#" data-target=".collapse" role="button" class="text-white p-1">
-                  <i class="fa fa-bars fa-lg"></i>
-                </a>
-              {% comment %} <img src="{% static '/app1/reddit.png' %}" alt="logo" style="width:65px;height:65px;"> {% endcomment %}
-              <img src="https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Emblem.png" alt="logo" style="width:65px;height:auto;">
-              
-                {% if user.is_authenticated %}
-                <ul class="navbar-nav ml-auto">
-                  <li class="nav-item active">
-                    <a class="nav-link" href="/">{{user}}</a>
-                  </li>
-                  <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout <span class="sr-only">(current)</span></a>
-                  </li>
-                </ul>
-                {% else %}
-                <ul class="navbar-nav mr-auto">
-                  <li class="nav-item active">
-                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-                  </li>
-                  <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'login' %}">Login <span class="sr-only">(current)</span></a>
-                  </li>
-                  <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'signup' %}">Sign Up <span class="sr-only">(current)</span></a>
-                  </li>
-                </ul>
-                {% endif %}
-            </div>
-          </nav>
-        {% comment %} end {% endcomment %}
-
-        <br></br>
-
-        {% comment %} jumbotron {% endcomment %}
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="jumbotron">
-                    {% comment %} <h1 class="display-4 row justify-content-center">User Authentication System</h1> {% endcomment %}
-                    {% comment %} <hr class="my-4"> {% endcomment %}
-                    {% block body %}{% endblock %}
-                </div>
-            </div>
-        </div>
-        {% comment %} end {% endcomment %}
-
-        <!-- Footer -->
-        <footer id="footer" class="bg-primary text-white d-flex-column text-center fixed-bottom">
-          <hr class="mt-0"> 
-          <!--Social buttons-->
-          <div class="text-center">
-            {% comment %} <h4>You can find us at</h4> {% endcomment %}
-            <ul class="list-unstyled list-inline">
-              <li class="list-inline-item">
-                <a target="_blank" href="https://codepen.io/jettaz" class="sbtn btn-large mx-1" title="Facebook">
-                  <i class="fab fa-facebook-square fa-2x"></i>
-                </a>
-              </li>
-              <li class="list-inline-item">
-                <a target="_blank" href="https://codepen.io/jettaz" class="sbtn btn-large mx-1" title="Linkedin">
-                  <i class="fab fa-linkedin fa-2x"></i>
-                </a>
-              </li>
-              <li class="list-inline-item">
-                <a target="_blank" href="https://codepen.io/jettaz" class="sbtn btn-large mx-1" title="Twitter">
-                  <i class="fab fa-twitter-square fa-2x"></i>
-                </a>
-              </li>
-              <li class="list-inline-item">
-                <a target="_blank" href="https://codepen.io/jettaz" class="sbtn btn-large mx-1" title="Youtube">
-                  <i class="fab fa-youtube-square fa-2x"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <!--/.Social buttons-->
-          <hr class="mb-0">
-          <!--Footer Links-->
-          <div class="container text-left text-md-center">
-            <div class="row">
-              <!--First column-->
-              <div class="col-md-3 mx-auto shfooter">
-                <h5 class="my-2 font-weight-bold d-none d-md-block">Product</h5>
-                <div class="d-md-none title" data-target="#Product" data-toggle="collapse">
-                  <div class="mt-3 font-weight-bold">Product
-                    <div class="float-right navbar-toggler">
-                      <i class="fas fa-angle-down"></i>
-                      <i class="fas fa-angle-up"></i>
+      {% comment %} <div class="container-fluid g-0"> {% endcomment %}
+          <app-header>
+              <nav class="navbar navbar-expand navbar-dark bg-dark px-2">
+                    <div class="side-nav-button p-2 me-3 text">
+                      <i class="fas fa-bars fa-lg" style="color: #ffffff;" onclick="toggleSideNav()"></i>
                     </div>
-                  </div>
+                    {% comment %} <img src="{% static '/app1/reddit.png' %}" alt="logo" style="width:65px;height:65px;"> {% endcomment %}
+                    <img src="https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Emblem.png" alt="logo" style="width:65px;height:auto;">
+                      {% if user.is_authenticated %}
+                      <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                          <a class="nav-link" href="/">{{user}}</a>
+                        </li>
+                        <li class="nav-item active">
+                          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                      </ul>
+                      {% else %}
+                      <ul class="navbar-nav me-auto">
+                        <li class="nav-item active">
+                          <a class="nav-link" href="/">Home</a>
+                        </li>
+                        <li class="nav-item active">
+                          <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item active">
+                          <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                        </li>
+                      </ul>
+                      {% endif %}
+                </nav>
+          </app-header>
+          <main>
+              <app-side-nav id="sideNav">
+                <div class="side-nav-content">
+                  <ul class="nav-list">
+                    <li class="nav-list-item">
+                      <i class="fas fa-home fa-lg"></i>
+                      <span >
+                        <a href="{% url 'login' %}">Dashboard</a>
+                      </span> 
+                    </li>
+                    <li class="nav-list-item">
+                      <i class="fas fa-chart-line fa-lg"></i>
+                      <span >
+                        <a href="#">Analytics</a>
+                      </span> 
+                    </li>
+                    <li class="nav-list-item">
+                      <i class="fas fa-bell fa-lg"></i>
+                      <span>
+                        <a href="#">Notification</a>
+                      </span> 
+                    </li>
+                  </ul>
                 </div>
-                <ul class="list-unstyled collapse" id="Product">
-                  <li><a target="_blank" href="https://codepen.io/jettaz">Secure Cloud Hosting</a></li>
-                  <li><a target="_blank" href="https://codepen.io/jettaz">Engage Your Audience</a></li>
-                  <li><a target="_blank" href="https://codepen.io/jettaz">Website Support</a></li>
-                </ul>
-              </div>
-              <!--/.First column-->
-              <hr class="clearfix w-100 d-md-none mb-0">
-              <!--Second column-->
-              <div class="col-md-3 mx-auto shfooter">
-                <h5 class="my-2 font-weight-bold d-none d-md-block">Company</h5>
-                <div class="d-md-none title" data-target="#Company" data-toggle="collapse">
-                  <div class="mt-3 font-weight-bold">Company
-                    <div class="float-right navbar-toggler">
-                      <i class="fas fa-angle-down"></i>
-                      <i class="fas fa-angle-up"></i>
-                    </div>
-                  </div>
-                </div>
-                <ul class="list-unstyled collapse" id="Company">
-                  <li><a target="_blank" href="https://codepen.io/jettaz">About</a></li>
-                  <li><a target="_blank" href="https://codepen.io/jettaz">Careers</a></li>
-                  <li><a target="_blank" href="https://codepen.io/jettaz">FAQ</a></li>
-                </ul>
-              </div>
-              <!--/.Second column-->
-              {% comment %} <hr class="clearfix w-100 d-md-none mb-0"> {% endcomment %}
+              </app-side-nav>
+              <div class="display-area">
+                  <br></br>
 
-              <!--Fourth column-->
-              <div class="col-md-3 mx-auto shfooter">
-                <h5 class="my-2 font-weight-bold d-none d-md-block">Get Help</h5>
-                <div class="d-md-none title" data-target="#Get-Help" data-toggle="collapse">
-                  <div class="mt-3 font-weight-bold">Get Help
-                    <div class="float-right navbar-toggler">
-                      <i class="fas fa-angle-down"></i>
-                      <i class="fas fa-angle-up"></i>
-                    </div>
+                  {% comment %} jumbotron {% endcomment %}
+                  <div class="container">
+                      <div class="row justify-content-center">
+                          <div class="jumbotron">
+                              {% comment %} <h1 class="display-4 row justify-content-center">User Authentication System</h1> {% endcomment %}
+                              {% comment %} <hr class="my-4"> {% endcomment %}
+                              {% block body %}{% endblock %}
+                          </div>
+                      </div>
                   </div>
-                </div>
-                <ul class="list-unstyled collapse" id="Get-Help">
-                  <li><a target="_blank" href="https://codepen.io/jettaz" target="_blank">Help Center</a></li>
-                  <li><a target="_blank" href="https://codepen.io/jettaz">Contact Us</a></li>
-                  <li><a target="_blank" href="https://codepen.io/jettaz">Privacy Policy</a></li>
-                </ul>
+                  {% comment %} end {% endcomment %}
               </div>
-              <!--/.Fourth column-->
-            </div>
-          </div>
-          <!--/.Footer Links-->
-          <hr class="mb-0">
-          <!--Copyright-->
-          <div class="py-3 text-center">
-            Copyright 1998 -
-            <script>
-              document.write(new Date().getFullYear())
-            </script> <a target="_blank" href="https://codepen.io/jettaz"></a> | Developed by Barsha Nayak
-          </div>
-          <!--/.Copyright-->
-        </footer>
+          </main>
+          <app-footer>
             <!-- Footer -->
-          </div>
-        </div>
-    </div>
-        <script src="{% static 'js/a.js' %}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>    </body>
+{% include "footer.html" %}
+    <!-- Footer -->
+          </app-footer>
+      {% comment %} </div> {% endcomment %}
+        <script>
+          function toggleSideNav() {
+            console.log("toggleSideNav called");
+            var sideNavContent = document.querySelector(".side-nav-content");
+            sideNavContent.classList.toggle("collapsed");
+            var sideNav = document.querySelector("#sideNav");
+            sideNav.classList.toggle("collapsed");
+          }
+        </script>
+        {% comment %} <script src="{% static 'js/a.js' %}"></script> {% endcomment %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
