@@ -19,12 +19,12 @@
     <body>
       {% comment %} <div class="container-fluid g-0"> {% endcomment %}
           <app-header>
-              <nav class="navbar navbar-expand navbar-dark bg-dark px-2">
+              <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
                     <div class="side-nav-button p-2 me-3 text">
                       <i class="fas fa-bars fa-lg" style="color: #ffffff;" onclick="toggleSideNav()"></i>
                     </div>
                     {% comment %} <img src="{% static '/app1/reddit.png' %}" alt="logo" style="width:65px;height:65px;"> {% endcomment %}
-                    <img src="https://logos-world.net/wp-content/uploads/2020/11/Flipkart-Emblem.png" alt="logo" style="width:65px;height:auto;">
+                    <img src="https://mymedia.myn.global/mynwebsite/images/Icons/myn-logo-bw.png" alt="logo" style="width:80px;height:auto;margin:20px;">
                       {% if user.is_authenticated %}
                       <ul class="navbar-nav ml-auto">
                         <li class="nav-item active">

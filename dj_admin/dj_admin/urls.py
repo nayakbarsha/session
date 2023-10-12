@@ -21,5 +21,6 @@ handler404 = 'app1.views.custom_404'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('app1.urls')),
+    path('api/',include('API.urls')),
     # path('verification/', include('verify_email.urls')),
 ]
