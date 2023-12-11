@@ -1,4 +1,4 @@
-from rest_framework.request import Request
+# from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -9,7 +9,8 @@ from API.models import Review
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import mixins
-
+# from rest_framework.permissions import IsAuthenticated
+from API.permissions import IsOwnerOrReadOnly
 
 # ----------------------function based views ---------------------------
 
@@ -73,11 +74,10 @@ from rest_framework import mixins
 
 
 # -------------------Mixins------------------------------
-class ReviewList(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  generics.GenericAPIView):
+class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -85,23 +85,13 @@ class ReviewList(mixins.ListModelMixin,
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
     
-class ReviewDetails(mixins.RetrieveModelMixin,
-                    mixins.DestroyModelMixin, generics.GenericAPIView):
+
+
+# -------------------Generics class based view----------------
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-    
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs) 
-    
-
-
-
-
-
-
+    permission_classes = [IsOwnerOrReadOnly]
 
 
 
