@@ -71,6 +71,12 @@
                         <a href="#">Notification</a>
                       </span> 
                     </li>
+                    <li class="nav-list-item">
+                      <i class="fas fa-info-circle"></i>
+                      <span>
+                        <a href="#">About</a>
+                      </span> 
+                    </li>
                   </ul>
                 </div>
               </app-side-nav>
@@ -90,11 +96,13 @@
                   {% comment %} end {% endcomment %}
               </div>
           </main>
+          <!-- Footer -->
           <app-footer>
-            <!-- Footer -->
-{% include "footer.html" %}
-    <!-- Footer -->
+            
+          {% include "footer.html" %}
+    
           </app-footer>
+          <!-- Footer end-->
       {% comment %} </div> {% endcomment %}
         <script>
           function toggleSideNav() {

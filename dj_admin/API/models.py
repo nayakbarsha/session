@@ -11,5 +11,5 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "user %s gave " % self.review_user.username + str(self.rating)   + "(*)"
+        return "user %s gave " % self.review_user.username + str(self.rating) + "(*)"
         # return "%s the restaurant" % self.place.name

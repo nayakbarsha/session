@@ -5,8 +5,8 @@
 
 {% block body %}
         {% if user.is_superuser %}
-          <table class="table table-borderless">
-            <thead class="border-bottom font-weight-bold">
+          <table class="table">
+            <thead class="border-bottom">
               <form method="GET">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" name="search" placeholder="Search for users">
@@ -22,14 +22,9 @@
                     <td><h3><b>Username</b></h3></td>
                     <td>
                       <h4><a href="{% url 'signup' %}">
-                        <i class="fas fa-plus-square fa-lg" style="color: #9429ff;"> Add user</i>                      
+                        <i class="fas fa-plus-square fa-lg" style="color: #0000ff;"> Add user</i>                      
                       </a><h4>
                     </td>
-                    {% comment %} <td><form class="form-inline my-2 my-lg-0" method="GET">
-                      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                    </form></td> {% endcomment %}
-                    <td></td>
                 </tr>
             </thead>
             <tbody>
