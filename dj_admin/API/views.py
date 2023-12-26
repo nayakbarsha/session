@@ -9,8 +9,8 @@ from API.models import Review
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import mixins
-# from rest_framework.permissions import IsAuthenticated
-from API.permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated
+from API.permissions import IsReviewerOrReadOnly,IsOwnerOrReadOnly
 
 # ----------------------function based views ---------------------------
 
@@ -91,48 +91,38 @@ class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.Generi
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsReviewerOrReadOnly]
 
-class UserList(generics.ListCreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserlistSerializer
-    # permission_classes = [IsOwnerOrReadOnly]
-
-
-class UserDetails(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserlistSerializer
-    # permission_classes = [IsOwnerOrReadOnly]
 
 
 # ---------CLASS BASED VIEWS --------------------------------
-# class UserList(APIView):
-#     def get(self, request):
-#         ulist = User.objects.all()
-#         serializer = UserlistSerializer(instance=ulist, many=True)
-#         response = {"message":"userlist", "data":serializer.data}
+class UserList(APIView):
+    def get(self, request):
+        ulist = User.objects.all()
+        serializer = UserlistSerializer(instance=ulist, many=True)
+        response = {"message":"userlist", "data":serializer.data}
 
-#         return Response(data=response, status=status.HTTP_200_OK)
+        return Response(data=response, status=status.HTTP_200_OK)
     
-#     def post(self, request):
-#         data=request.data
-#         serializer = UserlistSerializer(data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             response = {"message":"new user added", "data":data}
-#             return Response(data=response, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors)
+    def post(self, request):
+        data=request.data
+        serializer = UserlistSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            response = {"message":"new user added", "data":data}
+            return Response(data=response, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors)
         
 
 # class Userdetails(APIView):
-#     # permission_classes = [IsOwnerOrReadOnly]
 #     def get(self, request, pk):
 #         udetail = get_object_or_404(User, pk=pk)
 #         serializer = UserlistSerializer(udetail)
 #         return Response(serializer.data, status=status.HTTP_200_OK)
     
 #     def put(self, request, pk):
+#         permission_classes = [IsOwnerOrReadOnly]
 #         udetail = get_object_or_404(User, pk=pk)
 #         data = request.data
 #         serializer = UserlistSerializer(udetail, data=data)
@@ -147,3 +137,23 @@ class UserDetails(generics.RetrieveUpdateDestroyAPIView):
 #         udetail = get_object_or_404(User, pk=pk)
 #         udetail.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+# -------------------Mixins------------------------------
+class Userdetails( mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                       generics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class =UserlistSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
