@@ -1,4 +1,4 @@
-# from rest_framework.request import Request
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -6,11 +6,16 @@ from .serializers import UserlistSerializer, ReviewSerializer
 from rest_framework import status
 from django.contrib.auth.models import User
 from API.models import Review
-from django.shortcuts import get_object_or_404
+# from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from API.permissions import IsReviewerOrReadOnly,IsOwnerOrReadOnly
+
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 # ----------------------function based views ---------------------------
 
@@ -24,16 +29,21 @@ from API.permissions import IsReviewerOrReadOnly,IsOwnerOrReadOnly
 
 #     return Response(data=response, status=status.HTTP_200_OK)
 
-# @api_view(http_method_names=["POST"])
-# def adduser(request:Request):
-#     if request.method == "POST":
-#         data=request.data
-#         serializer = UserlistSerializer(data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             response = {"message":"new user added", "data":data}
-#             return Response(data=response, status=status.HTTP_201_CREATED)
-#         return Response(data=response, status=status.HTTP_400_BAD_REQUEST)
+@api_view(http_method_names=["POST"])
+def adduser(request:Request):
+    if request.method == "POST":
+        data=request.data
+        serializer = UserlistSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            response = {"message":"new user added", "data":data}
+            return Response(data=response, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 # @api_view(http_method_names=["GET"])
 # def userdetail(request:Request, user_id:int):
@@ -97,6 +107,7 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
 
 # ---------CLASS BASED VIEWS --------------------------------
 class UserList(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         ulist = User.objects.all()
         serializer = UserlistSerializer(instance=ulist, many=True)
@@ -104,15 +115,15 @@ class UserList(APIView):
 
         return Response(data=response, status=status.HTTP_200_OK)
     
-    def post(self, request):
-        data=request.data
-        serializer = UserlistSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            response = {"message":"new user added", "data":data}
-            return Response(data=response, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors)
+    # def post(self, request):
+    #     data=request.data
+    #     serializer = UserlistSerializer(data=data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         response = {"message":"new user added", "data":data}
+    #         return Response(data=response, status=status.HTTP_201_CREATED)
+    #     else:
+    #         return Response(serializer.errors)
         
 
 # class Userdetails(APIView):
@@ -157,3 +168,21 @@ class Userdetails( mixins.RetrieveModelMixin,
     
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
