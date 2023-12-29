@@ -6,7 +6,10 @@ urlpatterns = [
     path('userdetails/<int:pk>/', views.Userdetails.as_view(), name='userdetail'),
     path('reviewlist/',views.ReviewList.as_view(), name='reviewlist'),
     path('reviewdetails/<int:pk>/', views.ReviewDetails.as_view(), name='reviewdetails'),
-    path('adduser/', views.adduser, name='adduser'),
+    # path('login/', obtain_auth_token)
+    path('login/', views.LoginView.as_view()),
+
+    # path('adduser/', views.adduser, name='adduser'),
 #     path('edituser/<int:user_id>/', views.edituser, name='edituser'),
 #     path('deleteuser/<int:user_id>/', views.deleteuser, name='deleteuser'),
 ]
