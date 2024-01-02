@@ -159,7 +159,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [BASE_DIR/"static"]
 
 # added this for session expiry
-SESSION_EXPIRE_SECONDS = 900  # Expire after 15 minutes
+SESSION_EXPIRE_SECONDS = 3600  # Expire after 15 minutes
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 SESSION_TIMEOUT_REDIRECT = 'login/' # Add your URL
 SESSION_EXPIRE_AT_BROWSER_CLOSE=True # Invalid session
@@ -191,4 +191,4 @@ REST_FRAMEWORK = {
         'rest_framework_expiring_authtoken.authentication.ExpiringTokenAuthentication',
     ],
 }
-EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(days=1)
+EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(seconds=60)

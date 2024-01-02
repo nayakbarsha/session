@@ -33,14 +33,26 @@ class LoginView(APIView):
 
         user = authenticate(username=username, password=password)
 
+        # if user:
+        #     token, created = Token.objects.get_or_create(user=user)
+        #     return Response({'token': token.key}, status=status.HTTP_200_OK)
+        # else:
+        #     return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         if user:
+            # delete old token and create new
+            Token.objects.filter(user=user).delete()
             token, created = Token.objects.get_or_create(user=user)
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-
-
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def refresh_token(request):
+    user = request.user
+    Token.objects.filter(user=user).delete()
+    new_token, created = Token.objects.get_or_create(user=user)
+    return Response({'token': new_token.key}, status=status.HTTP_200_OK)
 # ----------------------function based views ---------------------------
 
 # Create your views here.
@@ -185,7 +197,7 @@ class UserList(APIView):
 
 # -------------------Mixins------------------------------
 @authentication_classes([TokenAuthentication])
-@permission_classes([IsOwnerOrReadOnly, IsAuthenticated])
+@permission_classes([IsOwnerOrReadOnly])
 class Userdetails( mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                      mixins.DestroyModelMixin,
@@ -206,7 +218,6 @@ class Userdetails( mixins.RetrieveModelMixin,
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
     
-
 
 
 
