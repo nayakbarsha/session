@@ -11,8 +11,8 @@ from API.models import Review
 from rest_framework import generics
 from rest_framework import mixins
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from API.permissions import IsReviewerOrReadOnly,IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from API.permissions import IsReviewerOrReadOnly,IsOwnerOrReadOnly, IsOwner
 from rest_framework.decorators import authentication_classes, permission_classes
 # from django.conf import settings
 # from django.db.models.signals import post_save
@@ -45,14 +45,101 @@ class LoginView(APIView):
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        
 
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def refresh_token(request):
-    user = request.user
-    Token.objects.filter(user=user).delete()
-    new_token, created = Token.objects.get_or_create(user=user)
-    return Response({'token': new_token.key}, status=status.HTTP_200_OK)
+
+# ---------CLASS BASED VIEWS --------------------------------
+
+class UserList(APIView):
+    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAuthenticated]
+    def get(self, request):
+        ulist = User.objects.all()
+        serializer = UserlistSerializer(instance=ulist, many=True)
+        response = {"message":"userlist", "data":serializer.data}
+
+        return Response(data=response, status=status.HTTP_200_OK)
+
+class CreateUser(APIView):
+    def post(self, request):
+        data=request.data
+        serializer = UserlistSerializer(data=data)
+        
+        if serializer.is_valid():
+            if ('password' in self.request.data):
+                password = make_password(self.request.data['password'])
+                serializer.save(password=password)
+            else:
+                serializer.save()
+            response = {"message":"new user added", "data":data}
+            return Response(data=response, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors)
+        
+# -------------------Mixins------------------------------
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+'''only the user should be allowed to access this'''
+@permission_classes([IsOwner])
+class Userdetails( mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                       generics.GenericAPIView):
+    
+    queryset = User.objects.all()
+    serializer_class =UserlistSerializer
+    # permission_classes = [IsOwnerOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+ # -------------------Mixins------------------------------
+@permission_classes([IsAdminUser])
+class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class CreateReview(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+
+
+# -------------------Generics class based view----------------
+@authentication_classes([IsAuthenticated])
+@permission_classes([IsReviewerOrReadOnly])
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    # permission_classes = [IsReviewerOrReadOnly]
+
+# token authentication using signals
+# @receiver(post_save, sender=User)
+# def create_auth_token(sender, instance, created, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)       
+
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+# def refresh_token(request):
+#     user = request.user
+#     Token.objects.filter(user=user).delete()
+#     new_token, created = Token.objects.get_or_create(user=user)
+#     return Response({'token': new_token.key}, status=status.HTTP_200_OK)
 # ----------------------function based views ---------------------------
 
 # Create your views here.
@@ -111,65 +198,6 @@ def refresh_token(request):
 
 
 
-
-
-
-
-
-# -------------------Mixins------------------------------
-class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-    # permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    
-
-
-# -------------------Generics class based view----------------
-@authentication_classes([IsAuthenticated])
-@permission_classes([IsReviewerOrReadOnly])
-class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-    # permission_classes = [IsReviewerOrReadOnly]
-
-# token authentication using signals
-# @receiver(post_save, sender=User)
-# def create_auth_token(sender, instance, created, **kwargs):
-#     if created:
-#         Token.objects.create(user=instance)
-
-# ---------CLASS BASED VIEWS --------------------------------
-class UserList(APIView):
-    # permission_classes = [IsAuthenticated]
-    def get(self, request):
-        ulist = User.objects.all()
-        serializer = UserlistSerializer(instance=ulist, many=True)
-        response = {"message":"userlist", "data":serializer.data}
-
-        return Response(data=response, status=status.HTTP_200_OK)
-    
-    def post(self, request):
-        data=request.data
-        serializer = UserlistSerializer(data=data)
-        
-        if serializer.is_valid():
-            if ('password' in self.request.data):
-                password = make_password(self.request.data['password'])
-                serializer.save(password=password)
-            else:
-                serializer.save()
-            response = {"message":"new user added", "data":data}
-            return Response(data=response, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors)
-        
-
 # class Userdetails(APIView):
 #     def get(self, request, pk):
 #         udetail = get_object_or_404(User, pk=pk)
@@ -195,28 +223,7 @@ class UserList(APIView):
 
 
 
-# -------------------Mixins------------------------------
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsOwnerOrReadOnly])
-class Userdetails( mixins.RetrieveModelMixin,
-                    mixins.UpdateModelMixin,
-                     mixins.DestroyModelMixin,
-                       generics.GenericAPIView):
-    
-    '''need to filter users with pk here in order to get that particular user data'''
-    
-    queryset = User.objects.all()
-    serializer_class =UserlistSerializer
-    # permission_classes = [IsOwnerOrReadOnly]
 
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
     
 
 

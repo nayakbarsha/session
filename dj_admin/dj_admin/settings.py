@@ -191,4 +191,4 @@ REST_FRAMEWORK = {
         'rest_framework_expiring_authtoken.authentication.ExpiringTokenAuthentication',
     ],
 }
-EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(seconds=60)
+EXPIRING_TOKEN_LIFESPAN = datetime.timedelta(days=1)
